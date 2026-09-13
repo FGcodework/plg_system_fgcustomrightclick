@@ -1,4 +1,4 @@
-# FG Custom Right Click
+﻿# FG Custom Right Click
 
 <img src="assets/logo.png" width="96" height="96" alt="FG Custom Right Click logo">
 
@@ -69,7 +69,7 @@ Click for Joomla 3.X" extension.
 ## Installation
 
 1. Download the latest release ZIP from the
-   [Releases](https://github.com/ferino75/plg_system_fgcustomrightclick/releases)
+   [Releases](https://github.com/FGcodework/plg_system_fgcustomrightclick/releases)
    page.
 2. In Joomla, go to **System → Install → Extensions** and upload the ZIP.
 3. Enable the plugin under **System → Manage → Plugins** and search for

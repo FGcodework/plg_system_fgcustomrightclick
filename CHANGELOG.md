@@ -1,4 +1,4 @@
-# Changelog - plg_system_fgcustomrightclick
+﻿# Changelog - plg_system_fgcustomrightclick
 
 ## 1.13.1 (2026-08-29)
 
@@ -1109,7 +1109,7 @@ carried forward from v1.2.1:
 - Media files renamed (`fgcustomrightclick.js` / `.css`); `addScriptOptions`
   key updated to match
 - Added `<updateservers>` block pointing at `updates.xml` on GitHub
-  (`ferino75/plg_system_fgcustomrightclick`, master branch)
+  (`FGcodework/plg_system_fgcustomrightclick`, master branch)
 - Author/copyright set to Fero
 - No functional changes to plugin behaviour in this release
 
