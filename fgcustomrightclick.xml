@@ -1,11 +1,11 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <extension type="plugin" group="system" method="upgrade">
 	<name>plg_system_fgcustomrightclick</name>
 	<author>Fero</author>
 	<creationDate>2026-08-27</creationDate>
 	<copyright>(C) 2026 Fero. All rights reserved.</copyright>
 	<license>GNU General Public License version 2 or later</license>
-	<version>1.13.1</version>
+	<version>1.13.2</version>
 	<description>PLG_SYSTEM_FGCUSTOMRIGHTCLICK_XML_DESCRIPTION</description>
 	<namespace path="src">FG\Plugin\System\Fgcustomrightclick</namespace>
 
@@ -33,7 +33,15 @@
 
 	<config>
 		<fields name="params">
-			<fieldset name="basic" label="PLG_SYSTEM_FGCUSTOMRIGHTCLICK_FIELDSET_BASIC">
+			<fieldset name="basic">
+				<field
+					name="support_note"
+					type="note"
+					description="PLG_SYSTEM_FGCUSTOMRIGHTCLICK_FIELD_SUPPORT_DESC"
+				/>
+			</fieldset>
+
+			<fieldset name="settings" label="PLG_SYSTEM_FGCUSTOMRIGHTCLICK_FIELDSET_SETTINGS">
 
 				<field
 					name="usergroups"

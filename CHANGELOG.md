@@ -1,4 +1,39 @@
-﻿# Changelog - plg_system_fgcustomrightclick
+# Changelog - plg_system_fgcustomrightclick
+
+## 1.13.2 (2026-09-28)
+
+### Admin UX - FG-series tab layout with a support note
+
+- **Aligned the configuration screen with the rest of the FG plugin
+  series** (same layout as FG Editor Switcher): the "Plugin" tab now
+  shows only the plugin description plus the standard FG support note
+  (free & open source, optional Ko-fi tip, "More FG Extensions" link),
+  and every setting that used to live there moved to a new, separate
+  "Settings" tab. Tab order: Plugin, Settings, Exclusions, Custom
+  Shortcuts, Accessibility, Popup, Custom menu.
+- **No settings are lost on upgrade**: moving fields between fieldsets
+  does not change their parameter names (all fieldsets share the same
+  `params` container), so saved values carry over unchanged.
+- The support note is a label-less `note` field whose markup is
+  byte-identical (after INI parsing, verified directly) to the one
+  already in production in FG Editor Switcher.
+- The Popup/Custom menu tab notes now correctly point to the "Settings"
+  tab instead of the "Plugin" tab.
+- Also removed an accidental UTF-8 BOM that the ferino75 -> FGcodework
+  rename had added to fgcustomrightclick.xml, updates.xml, README.md and
+  CHANGELOG.md (verified harmless to Joomla's XML parsers, but no other
+  file in the repo has one).
+- Removed the now-unused `FIELDSET_BASIC` language key, added
+  `FIELDSET_SETTINGS` and `FIELD_SUPPORT_DESC` (EN + SK, 88/88 keys).
+- **Language lint reworked, not weakened**: the support note is the
+  first deliberately-HTML language value in this plugin, so the blanket
+  "no tag anywhere" rule became (1) no markup outside an explicit
+  allowlist of keys, (2) every raw-text element (script, style,
+  noscript, textarea, ...) must be closed within the same value in ANY
+  key - the exact failure mode behind the v1.12.2 incident - and (3)
+  allowlisted markup must be well-formed. Mutation-tested: an unclosed
+  "noscript" in a normal description, a missing closing div in the
+  support note, and an unclosed style block are each caught.
 
 ## 1.13.1 (2026-08-29)
 

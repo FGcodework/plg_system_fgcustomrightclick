@@ -34,37 +34,103 @@ console.log('TEST: no language file uses backslash-escaped double quotes or a ba
     });
 }
 
-console.log('TEST: no language value contains a literal HTML-tag-like sequence (<letter...)');
-{
-    // CONFIRMED root cause of a real production incident: a field
-    // description containing the literal, unclosed text "<noscript>"
-    // (meant as plain-English prose, not markup) silently broke the
-    // entire rest of the admin edit page. Joomla renders field
-    // descriptions as raw HTML, not escaped text - and per the HTML5
-    // spec, <noscript> is a "raw text" element when scripting is
-    // enabled, meaning the browser treats everything from that point
-    // until the next literal "</noscript>" string as inert text, not
-    // markup. With no matching close tag anywhere later in the page,
-    // this silently swallowed the rest of the DOM (including the
-    // Popup/Custom menu tabs and, apparently, enough page structure to
-    // also break the Save/Save & Close toolbar buttons) - with zero
-    // console errors, since the browser was correctly following the
-    // spec, not encountering a parse error. A second instance
-    // (a literal "<video>" mention) was found and fixed at the same
-    // time - <video> is a normal (non-raw-text) element so it likely
-    // didn't cause the same severity of breakage, but the risk is the
-    // same class of bug and is never worth taking. The fix in both
-    // cases: describe tag/feature names in quotes ('noscript', 'video'),
-    // never with literal angle brackets, anywhere in a language file.
-    files.forEach((file) => {
-        const content = fs.readFileSync(file, 'utf8');
-        const relative = file.replace(__dirname + '/../', '');
-        const tagLikeMatch = content.match(/<[a-zA-Z][^\s"=]*/);
+// Keys whose value is DELIBERATE, well-formed admin-UI markup (the FG
+// support/Ko-fi block, identical to the one used across the FG plugin
+// series). Everything else must contain no markup at all.
+const HTML_ALLOWED_KEYS = new Set([
+    'PLG_SYSTEM_FGCUSTOMRIGHTCLICK_FIELD_SUPPORT_DESC',
+]);
 
+// HTML5 "raw text" / escapable-raw-text elements: once opened, the
+// browser treats EVERYTHING after them as inert text until the matching
+// closing tag. An unclosed one silently swallows the rest of the page -
+// this is exactly what broke the admin form in v1.12.2 (an unclosed
+// "<noscript>" in a field description). These must ALWAYS be closed
+// within the same value, even in allowlisted keys.
+const RAW_TEXT_ELEMENTS = ['script', 'style', 'noscript', 'textarea', 'title', 'iframe', 'xmp', 'noembed', 'noframes', 'plaintext'];
+const VOID_ELEMENTS = new Set(['br', 'img', 'hr', 'input', 'meta', 'link', 'wbr', 'source', 'area', 'col', 'embed', 'param', 'track']);
+
+function parseIni(content) {
+    const entries = [];
+    content.split(/\r?\n/).forEach((line) => {
+        const m = line.match(/^([A-Z0-9_]+)="(.*)"\s*$/);
+        if (m) {
+            entries.push({ key: m[1], value: m[2] });
+        }
+    });
+    return entries;
+}
+
+console.log('TEST: no literal HTML-tag-like sequence (<letter...) outside the explicit allowlist of deliberate-markup keys');
+{
+    // CONFIRMED root cause of a real production incident (v1.12.2): a
+    // field description containing the literal, unclosed text
+    // "<noscript>" (meant as plain prose, not markup) silently broke the
+    // entire rest of the admin edit page. Joomla renders field
+    // descriptions as raw HTML, not escaped text. Refer to tags/features
+    // in quotes ('noscript', 'video') instead - never literal angle
+    // brackets - except in keys that are deliberately markup.
+    files.forEach((file) => {
+        const relative = file.replace(__dirname + '/../', '');
+        const offenders = parseIni(fs.readFileSync(file, 'utf8'))
+            .filter((e) => !HTML_ALLOWED_KEYS.has(e.key) && /<[a-zA-Z]/.test(e.value))
+            .map((e) => e.key);
         assert(
-            !tagLikeMatch,
-            `${relative}: no literal HTML-tag-like sequence anywhere` + (tagLikeMatch ? ` (found: "${tagLikeMatch[0]}")` : '')
+            offenders.length === 0,
+            `${relative}: no literal HTML-tag-like sequence outside allowlisted keys` + (offenders.length ? ` (found in: ${offenders.join(', ')})` : '')
         );
+    });
+}
+
+console.log('TEST: every raw-text element (script/style/noscript/...) opened in ANY value is closed within that same value');
+{
+    files.forEach((file) => {
+        const relative = file.replace(__dirname + '/../', '');
+        const problems = [];
+        parseIni(fs.readFileSync(file, 'utf8')).forEach((e) => {
+            RAW_TEXT_ELEMENTS.forEach((tag) => {
+                const opens = (e.value.match(new RegExp('<' + tag + '(\\s|>|/)', 'gi')) || []).length;
+                const closes = (e.value.match(new RegExp('</' + tag + '\\s*>', 'gi')) || []).length;
+                if (opens !== closes) {
+                    problems.push(`${e.key} (<${tag}>: ${opens} opened, ${closes} closed)`);
+                }
+            });
+        });
+        assert(problems.length === 0, `${relative}: all raw-text elements balanced` + (problems.length ? ` - ${problems.join('; ')}` : ''));
+    });
+}
+
+console.log('TEST: allowlisted markup keys are well-formed (every non-void tag closed, correctly nested)');
+{
+    files.forEach((file) => {
+        const relative = file.replace(__dirname + '/../', '');
+        parseIni(fs.readFileSync(file, 'utf8'))
+            .filter((e) => HTML_ALLOWED_KEYS.has(e.key))
+            .forEach((e) => {
+                // Strip the contents of <style> blocks first - CSS like
+                // "a[target='_blank']" is not markup to be balanced.
+                const html = e.value.replace(/<style>[\s\S]*?<\/style>/gi, '');
+                const stack = [];
+                let error = null;
+                const tagRe = /<(\/?)([a-zA-Z][a-zA-Z0-9]*)\b[^>]*?(\/?)>/g;
+                let m;
+                while ((m = tagRe.exec(html)) !== null && !error) {
+                    const closing = m[1] === '/';
+                    const name = m[2].toLowerCase();
+                    if (VOID_ELEMENTS.has(name) || m[3] === '/') {
+                        continue;
+                    }
+                    if (!closing) {
+                        stack.push(name);
+                    } else if (stack.pop() !== name) {
+                        error = `unexpected </${name}>`;
+                    }
+                }
+                if (!error && stack.length) {
+                    error = `unclosed: ${stack.join(', ')}`;
+                }
+                assert(!error, `${relative}: ${e.key} is well-formed markup` + (error ? ` (${error})` : ''));
+            });
     });
 }
 
