@@ -1,5 +1,27 @@
 # Changelog - plg_system_fgcustomrightclick
 
+## 1.13.4 (2026-09-29)
+
+### JED checker (JAMSS) clean-up - no behaviour change
+
+- The JED checker's bundled JAMSS scan flagged pattern #21 ("at least two
+  characters in hexadecimal or octal notation") in `isSafeLinkValue()`:
+  the control-character regex `[\x00-\x1F\x7F]` contains two escape
+  sequences back to back, which JAMSS treats as possible obfuscated
+  code. It is not - it strips ASCII control characters from custom-menu
+  link URLs before the scheme check, so tricks like "java<TAB>script:"
+  can't bypass the javascript:-blocking.
+- Rewritten as `[\x00-\x1F]|\x7F` - no two escapes adjacent, same set
+  of bytes. Verified equivalent, not assumed: identical output for all
+  256 single bytes (exactly 33 removed: 0-31 and 127), for 100,000 random
+  byte strings, and for real attack/UTF-8 inputs (tab/NUL/DEL-obfuscated
+  javascript:, Slovak diacritics in URLs). The PHP link-scheme test
+  suite passes unchanged.
+- Verified with the checker's own code: the real 19-pattern JAMSS list
+  and its `CheckerHelper::cleanPhpCode()` were run over the package with
+  the checker's default file-extension list. Before: 1 hit (line 430,
+  matching the reported warning exactly). After: 0 hits.
+
 ## 1.13.3 (2026-09-29)
 
 ### JED naming convention fix

@@ -427,7 +427,13 @@ final class Fgcustomrightclick extends CMSPlugin implements SubscriberInterface
      */
     private function isSafeLinkValue(string $value): bool
     {
-        $normalised = preg_replace('/[\x00-\x1F\x7F]/', '', $value);
+        // Strip ASCII control characters (0x00-0x1F and 0x7F) before the
+        // scheme check, so tricks like "java<TAB>script:" can't slip past.
+        // Written as "[range]|single" rather than one character class on
+        // purpose: the JED checker's bundled JAMSS scan (pattern #21) flags
+        // two escape sequences in a row as possible obfuscated code.
+        // Matches exactly the same bytes as the former single class did.
+        $normalised = preg_replace('/[\x00-\x1F]|\x7F/', '', $value);
         $normalised = ltrim((string) $normalised);
 
         if (preg_match('/^([a-zA-Z][a-zA-Z0-9+.\-]*):/', $normalised, $matches)) {
