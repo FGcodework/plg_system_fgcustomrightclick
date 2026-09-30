@@ -1,5 +1,26 @@
 # Changelog - plg_system_fgcustomrightclick
 
+## 1.13.3 (2026-09-29)
+
+### JED naming convention fix
+
+- **Renamed the plugin's display name from "FG - Custom Right Click" to
+  "System - FG Custom Right Click"** (all four language files, EN + SK,
+  `.ini` and `.sys.ini`), plus the matching README install instruction.
+- Reason: the JED checker reported that plugin names must follow
+  "{Type} - {Extension Name}". Verified against the checker's own source
+  (`XmlInfoRule.php`): it resolves the manifest `<name>` through the
+  `.sys.ini` translation, takes the part before " - ", lowercases it,
+  strips whitespace, and requires it to equal the manifest's `group`
+  attribute (`system`). The old name yielded "fg", hence the warning.
+  Re-running that exact logic against the new name passes in both
+  languages (30 characters, under the 40-character warning threshold,
+  plain ASCII, no "joomla" in the name).
+- The manifest `<name>` itself stays the language key
+  `plg_system_fgcustomrightclick` and the element stays
+  `fgcustomrightclick`, so this is display-only: no reinstall, no lost
+  settings, and the update server keeps matching the installed plugin.
+
 ## 1.13.2 (2026-09-28)
 
 ### Admin UX - FG-series tab layout with a support note

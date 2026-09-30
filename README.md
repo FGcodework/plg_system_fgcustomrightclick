@@ -4,7 +4,7 @@
 
 [![Joomla](https://img.shields.io/badge/Joomla-6%2C%205%2C%204-1a6877?logo=joomla)](https://www.joomla.org/)
 [![License: GPL v2](https://img.shields.io/badge/License-GPLv2-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.13.2-ff6b4a)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.13.3-ff6b4a)](CHANGELOG.md)
 
 A native Joomla system plugin that disables printing, text selection/copy,
 image dragging, developer-tools keyboard shortcuts, and the browser's
@@ -73,7 +73,7 @@ Click for Joomla 3.X" extension.
    page.
 2. In Joomla, go to **System → Install → Extensions** and upload the ZIP.
 3. Enable the plugin under **System → Manage → Plugins** and search for
-   "FG - Custom Right Click".
+   "System - FG Custom Right Click".
 
 ## Known limitations
 
