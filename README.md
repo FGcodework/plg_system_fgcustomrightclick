@@ -1,10 +1,18 @@
-# FG Custom Right Click
+<p align="center">
+  <img src="assets/logo.png" alt="FG Custom Right Click logo" width="128" height="128">
+</p>
 
-<img src="assets/logo.png" width="96" height="96" alt="FG Custom Right Click logo">
+<h1 align="center">FG Custom Right Click</h1>
 
-[![Joomla](https://img.shields.io/badge/Joomla-6%2C%205%2C%204-1a6877?logo=joomla)](https://www.joomla.org/)
-[![License: GPL v2](https://img.shields.io/badge/License-GPLv2-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.13.4-ff6b4a)](CHANGELOG.md)
+<p align="center">
+  <img src="https://img.shields.io/github/v/tag/FGcodework/plg_system_fgcustomrightclick?label=version&color=ff6b4a" alt="Version">
+  <img src="https://img.shields.io/badge/Joomla-4%20%7C%205%20%7C%206-1a6877?logo=joomla&logoColor=white&color=blue" alt="Joomla 5/6">
+  <img src="https://img.shields.io/badge/PHP-8.1+-777bb4?logo=php&logoColor=white&color=purple" alt="PHP 8.1+">
+  <a href="https://extensions.joomla.org/extension/site-management/seo-a-metadata/fg-remove-generator/"><img src="https://img.shields.io/badge/Joomla!%20Extensions%20Directory%E2%84%A2-RemoveGenerator-blue" alt="JED"></a>
+  <img src="https://img.shields.io/badge/license-GPL--2.0+-green" alt="License">
+  <img src="https://img.shields.io/github/downloads/FGcodework/plg_system_fgcustomrightclick/total?color=brown" alt="Downloads">
+  <a href="https://ko-fi.com/FGcodework"><img src="https://img.shields.io/badge/support-Ko--fi-F16061.svg?logo=ko-fi&logoColor=white" alt="Support on Ko-fi"></a>
+</p>
 
 A native Joomla system plugin that disables printing, text selection/copy,
 image dragging, developer-tools keyboard shortcuts, and the browser's
