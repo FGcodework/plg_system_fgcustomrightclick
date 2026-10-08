@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/logo.png" alt="FG Custom Right Click logo" width="128" height="128">
+  <img src="assets/logo.webp" alt="FG Custom Right Click logo" width="128" height="128">
 </p>
 
 <h1 align="center">FG Custom Right Click</h1>
